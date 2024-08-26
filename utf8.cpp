@@ -19,13 +19,17 @@ namespace utf8 {
     
         string() : data("") {}
     
-        string(const string& other) : data(other.data), data_size(other.data_size) {}
+        string(const utf8::string& other) : data(other.data), data_size(other.data_size) {}
     
-        string(string&& other) noexcept : data(std::move(other.data)), data_size(std::move(other.data_size)) {}
+        string(utf8::string&& other) noexcept : data(std::move(other.data)), data_size(std::move(other.data_size)) {}
     
         ~string() {}
-    
-        string& operator=(const string& other) {
+
+        operator std::string() const {
+            return data;
+        }
+
+        utf8::string& operator=(const utf8::string& other) {
             if (this != &other) {
                 data = other.data;
                 data_size = other.data_size;
@@ -33,7 +37,7 @@ namespace utf8 {
             return *this;
         }
     
-        string& operator=(string&& other) noexcept {
+        utf8::string& operator=(utf8::string&& other) noexcept {
             if (this != &other) {
                 data = std::move(other.data);
                 data_size = std::move(other.data_size);
@@ -78,6 +82,30 @@ namespace utf8 {
             return *this;
         }
     
+        friend bool operator==(const utf8::string& lhs, const utf8::string& rhs) {
+            return lhs.data == rhs.data;
+        }
+
+        friend bool operator!=(const utf8::string& lhs, const utf8::string& rhs) {
+            return !(lhs == rhs);
+        }
+
+        friend bool operator==(const std::string& lhs, const utf8::string& rhs) {
+            return lhs == rhs.data;
+        }
+
+        friend bool operator!=(const std::string& lhs, const utf8::string& rhs) {
+            return !(lhs == rhs);
+        }
+
+        friend bool operator==(const utf8::string& lhs, const char* rhs) {
+            return lhs.data == rhs;
+        }
+
+        friend bool operator!=(const utf8::string& lhs, const char* rhs) {
+            return !(lhs == rhs);
+        }
+
         friend utf8::string operator+(const utf8::string& lhs, const utf8::string& rhs) {
             utf8::string result = lhs;
             result += rhs;
@@ -91,7 +119,7 @@ namespace utf8 {
         }
     
         friend utf8::string operator+(const std::string& lhs, const utf8::string& rhs) {
-            utf8::string result(lhs.c_str());
+            utf8::string result(lhs.data());
             result += rhs;
             return result;
         }
@@ -148,8 +176,49 @@ namespace utf8 {
             data.clear();
             data_size.clear();
         }
-    
-        friend std::ostream& operator<<(std::ostream& os, const string& utf8str) {
+
+        bool contains(const std::string& str) {
+            return data.contains(str);
+        }
+
+        bool starts_with(const std::string& str) {
+            return data.starts_with(str);
+        }
+        
+        bool ends_with(const std::string& str) {
+            return data.ends_with(str);
+        }
+
+        std::string front() const {
+            return empty()? "" : at(0);
+        }
+        
+        std::string back() const {
+            return empty()? "" : at(data_size.size() - 1);
+        }
+
+        utf8::string substr(size_t pos, size_t len = std::string::npos) const {
+            if (pos >= size()) {
+                throw std::out_of_range("Index out of range. Starting position exceeds string size.");
+            }
+
+            size_t start = std::accumulate(data_size.begin(), data_size.begin() + pos, 0);
+            size_t end = start;
+
+            if (len == std::string::npos) {
+                len = size() - pos;  
+            }
+
+            size_t char_count = std::min(len, size() - pos);
+
+            for (size_t i = 0; i < char_count; ++i) {
+                end += data_size[pos + i];
+            }
+
+            return utf8::string(data.substr(start, end - start).data());
+        }
+
+        friend std::ostream& operator<<(std::ostream& os, const utf8::string& utf8str) {
             os << utf8str.data;
             return os;
         }
