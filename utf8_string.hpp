@@ -232,6 +232,32 @@ namespace utf8 {
             return empty()? "" : at(data_size.size() - 1);
         }
 
+        // Erase a single UTF-8 character at the given index
+        inline void erase(size_t index) {
+            if (index >= data_size.size()) {
+                throw std::out_of_range("Index out of range.");
+            }
+
+            size_t start = std::accumulate(data_size.begin(), data_size.begin() + index, 0);
+            size_t char_size = data_size[index];
+
+            data.erase(start, char_size);
+            data_size.erase(data_size.begin() + index);
+        }
+
+        // Erase a range of UTF-8 characters [start_index, end_index)
+        inline void erase(size_t start_index, size_t end_index) {
+            if (start_index >= data_size.size() || end_index > data_size.size() || start_index >= end_index) {
+                throw std::out_of_range("Invalid range.");
+            }
+
+            size_t start = std::accumulate(data_size.begin(), data_size.begin() + start_index, 0);
+            size_t end = std::accumulate(data_size.begin(), data_size.begin() + end_index, 0);
+
+            data.erase(start, end - start);
+            data_size.erase(data_size.begin() + start_index, data_size.begin() + end_index);
+        }
+
         // Stream insertion operator
         friend inline std::ostream& operator<<(std::ostream& os, const utf8::string& utf8str) {
             os << utf8str.data;
@@ -257,4 +283,4 @@ namespace utf8 {
             }
         }
     };
-} // namespace utf8
+}
