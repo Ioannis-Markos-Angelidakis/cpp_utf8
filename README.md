@@ -4,7 +4,10 @@ Example:
 
 int32_t main() {
     utf8::string str = "Hάel😎 lo, 世界!"; 
+    
     std::cout << str << '\n';
+
+    str.erase(10);
     
     std::string stdstr = "κόσμος ";
     
