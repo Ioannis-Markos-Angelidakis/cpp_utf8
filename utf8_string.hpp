@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <vector>
 #include <numeric>
+#include <cstdint>
 
 namespace utf8 {
 
@@ -256,6 +257,91 @@ namespace utf8 {
 
             data.erase(start, end - start);
             data_size.erase(data_size.begin() + start_index, data_size.begin() + end_index);
+        }
+
+        inline uint32_t codepoint(size_t index) const {
+            if (index >= data_size.size()) {
+                throw std::out_of_range("Index out of range.");
+            }
+
+            size_t start = std::accumulate(data_size.begin(), data_size.begin() + index, 0);
+            size_t char_size = data_size[index];
+
+            const unsigned char* bytes = reinterpret_cast<const unsigned char*>(data.data()) + start;
+
+            uint32_t codepoint = 0;
+            if (char_size == 1) {
+                codepoint = bytes[0];
+            } else if (char_size == 2) {
+                codepoint = ((bytes[0] & 0x1F) << 6) |
+                            (bytes[1] & 0x3F);
+            } else if (char_size == 3) {
+                codepoint = ((bytes[0] & 0x0F) << 12) |
+                            ((bytes[1] & 0x3F) << 6) |
+                            (bytes[2] & 0x3F);
+            } else if (char_size == 4) {
+                codepoint = ((bytes[0] & 0x07) << 18) |
+                            ((bytes[1] & 0x3F) << 12) |
+                            ((bytes[2] & 0x3F) << 6) |
+                            (bytes[3] & 0x3F);
+            } else {
+                throw std::runtime_error("Invalid UTF-8 character.");
+            }
+
+            return codepoint;
+        }
+
+        inline bool is_symbol(const uint32_t codepoint) {
+            return
+                (codepoint >= 0x0021 && codepoint <= 0x002F) || // ! " # $ % & ' ( ) * + , - . /
+                (codepoint >= 0x003A && codepoint <= 0x0040) || // : ; < = > ? @
+                (codepoint >= 0x005B && codepoint <= 0x0060) || // [ \ ] ^ _ `
+                (codepoint >= 0x007B && codepoint <= 0x007E) || // { | } ~
+                (codepoint == 0x20AC) || // €
+                (codepoint >= 0x2000 && codepoint <= 0x206F) || // General Punctuation
+                (codepoint >= 0x2100 && codepoint <= 0x214F) || // Letterlike Symbols
+                (codepoint >= 0x2200 && codepoint <= 0x22FF) || // Mathematical Operators
+                (codepoint >= 0x2300 && codepoint <= 0x23FF) || // Miscellaneous Technical
+                (codepoint >= 0x2400 && codepoint <= 0x243F) || // Control Pictures
+                (codepoint >= 0x2440 && codepoint <= 0x245F) || // Optical Character Recognition
+                (codepoint >= 0x2500 && codepoint <= 0x257F) || // Box Drawing
+                (codepoint >= 0x2580 && codepoint <= 0x259F) || // Block Elements
+                (codepoint >= 0x25A0 && codepoint <= 0x25FF) || // Geometric Shapes
+                (codepoint >= 0x2600 && codepoint <= 0x26FF) || // Miscellaneous Symbols
+                (codepoint >= 0x2700 && codepoint <= 0x27BF) || // Dingbats
+                (codepoint >= 0x2B50 && codepoint <= 0x2B59) || // Miscellaneous Symbols and Pictographs
+                (codepoint >= 0x1F300 && codepoint <= 0x1F5FF) || // Miscellaneous Symbols and Pictographs
+                (codepoint >= 0x1F600 && codepoint <= 0x1F64F) || // Emoticons
+                (codepoint >= 0x1F680 && codepoint <= 0x1F6FF) || // Transport and Map Symbols
+                (codepoint >= 0x1F700 && codepoint <= 0x1F77F);   // Alchemical Symbols
+        }
+
+        inline bool is_uppercase(const uint32_t codepoint) {
+            return
+                (codepoint >= 0x0041 && codepoint <= 0x005A) || // Basic Latin A-Z
+                (codepoint >= 0x00C0 && codepoint <= 0x00D6) || // Latin-1 Supplement À-Ö
+                (codepoint >= 0x00D8 && codepoint <= 0x00DE) || // Latin-1 Supplement Ø-Þ
+                (codepoint >= 0x0100 && codepoint <= 0x017F) || // Latin Extended-A
+                (codepoint >= 0x0180 && codepoint <= 0x024F) || // Latin Extended-B
+                (codepoint >= 0x0410 && codepoint <= 0x042F) || // Cyrillic А-Я
+                (codepoint >= 0x0391 && codepoint <= 0x03A9) || // Greek and Coptic Α-Ω
+                (codepoint >= 0x0531 && codepoint <= 0x0556) || // Armenian
+                (codepoint >= 0x05D0 && codepoint <= 0x05EA) || // Hebrew
+                (codepoint >= 0x0600 && codepoint <= 0x06C0) || // Arabic (some uppercase)
+                (codepoint >= 0x0780 && codepoint <= 0x07A5) || // Thaana
+                (codepoint >= 0x0905 && codepoint <= 0x0939) || // Devanagari
+                (codepoint >= 0x0985 && codepoint <= 0x0995) || // Bengali
+                (codepoint >= 0x0A05 && codepoint <= 0x0A0A) || // Gurmukhi
+                (codepoint >= 0x0A85 && codepoint <= 0x0A8D) || // Gujarati
+                (codepoint >= 0x0B05 && codepoint <= 0x0B0C) || // Oriya
+                (codepoint >= 0x0B85 && codepoint <= 0x0B9A) || // Tamil
+                (codepoint >= 0x0C05 && codepoint <= 0x0C0C) || // Telugu
+                (codepoint >= 0x0C85 && codepoint <= 0x0C8C) || // Kannada
+                (codepoint >= 0x0D05 && codepoint <= 0x0D0C) || // Malayalam
+                (codepoint >= 0x1000 && codepoint <= 0x102A) || // Myanmar
+                (codepoint >= 0x10A0 && codepoint <= 0x10C5) || // Georgian
+                (codepoint >= 0x1100 && codepoint <= 0x1159) || // Hangul Jamo
+                (codepoint >= 0xAC00 && codepoint <= 0xD7A3);   // Hangul Syllables
         }
 
         // Stream insertion operator
