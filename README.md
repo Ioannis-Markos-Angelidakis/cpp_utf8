@@ -23,4 +23,5 @@ int32_t main() {
         std::cout << "Found '😎 ' at position: " << pos << '\n';
     }
 
+    std::cout << "Is symbol? `" << str.at(11) << "` " << (str.is_symbol(11)? "YES\n" : "NO\n");
 }
