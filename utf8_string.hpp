@@ -291,57 +291,59 @@ namespace utf8 {
             return codepoint;
         }
 
-        inline bool is_symbol(const uint32_t codepoint) {
+        inline bool is_symbol(const uint32_t index) {
+            uint32_t curr_codepoint = codepoint(index);
             return
-                (codepoint >= 0x0021 && codepoint <= 0x002F) || // ! " # $ % & ' ( ) * + , - . /
-                (codepoint >= 0x003A && codepoint <= 0x0040) || // : ; < = > ? @
-                (codepoint >= 0x005B && codepoint <= 0x0060) || // [ \ ] ^ _ `
-                (codepoint >= 0x007B && codepoint <= 0x007E) || // { | } ~
-                (codepoint == 0x20AC) || // €
-                (codepoint >= 0x2000 && codepoint <= 0x206F) || // General Punctuation
-                (codepoint >= 0x2100 && codepoint <= 0x214F) || // Letterlike Symbols
-                (codepoint >= 0x2200 && codepoint <= 0x22FF) || // Mathematical Operators
-                (codepoint >= 0x2300 && codepoint <= 0x23FF) || // Miscellaneous Technical
-                (codepoint >= 0x2400 && codepoint <= 0x243F) || // Control Pictures
-                (codepoint >= 0x2440 && codepoint <= 0x245F) || // Optical Character Recognition
-                (codepoint >= 0x2500 && codepoint <= 0x257F) || // Box Drawing
-                (codepoint >= 0x2580 && codepoint <= 0x259F) || // Block Elements
-                (codepoint >= 0x25A0 && codepoint <= 0x25FF) || // Geometric Shapes
-                (codepoint >= 0x2600 && codepoint <= 0x26FF) || // Miscellaneous Symbols
-                (codepoint >= 0x2700 && codepoint <= 0x27BF) || // Dingbats
-                (codepoint >= 0x2B50 && codepoint <= 0x2B59) || // Miscellaneous Symbols and Pictographs
-                (codepoint >= 0x1F300 && codepoint <= 0x1F5FF) || // Miscellaneous Symbols and Pictographs
-                (codepoint >= 0x1F600 && codepoint <= 0x1F64F) || // Emoticons
-                (codepoint >= 0x1F680 && codepoint <= 0x1F6FF) || // Transport and Map Symbols
-                (codepoint >= 0x1F700 && codepoint <= 0x1F77F);   // Alchemical Symbols
+                (curr_codepoint >= 0x0021 && curr_codepoint <= 0x002F) || // ! " # $ % & ' ( ) * + , - . /
+                (curr_codepoint >= 0x003A && curr_codepoint <= 0x0040) || // : ; < = > ? @
+                (curr_codepoint >= 0x005B && curr_codepoint <= 0x0060) || // [ \ ] ^ _ `
+                (curr_codepoint >= 0x007B && curr_codepoint <= 0x007E) || // { | } ~
+                (curr_codepoint == 0x20AC) || // €
+                (curr_codepoint >= 0x2000 && curr_codepoint <= 0x206F) || // General Punctuation
+                (curr_codepoint >= 0x2100 && curr_codepoint <= 0x214F) || // Letterlike Symbols
+                (curr_codepoint >= 0x2200 && curr_codepoint <= 0x22FF) || // Mathematical Operators
+                (curr_codepoint >= 0x2300 && curr_codepoint <= 0x23FF) || // Miscellaneous Technical
+                (curr_codepoint >= 0x2400 && curr_codepoint <= 0x243F) || // Control Pictures
+                (curr_codepoint >= 0x2440 && curr_codepoint <= 0x245F) || // Optical Character Recognition
+                (curr_codepoint >= 0x2500 && curr_codepoint <= 0x257F) || // Box Drawing
+                (curr_codepoint >= 0x2580 && curr_codepoint <= 0x259F) || // Block Elements
+                (curr_codepoint >= 0x25A0 && curr_codepoint <= 0x25FF) || // Geometric Shapes
+                (curr_codepoint >= 0x2600 && curr_codepoint <= 0x26FF) || // Miscellaneous Symbols
+                (curr_codepoint >= 0x2700 && curr_codepoint <= 0x27BF) || // Dingbats
+                (curr_codepoint >= 0x2B50 && curr_codepoint <= 0x2B59) || // Miscellaneous Symbols and Pictographs
+                (curr_codepoint >= 0x1F300 && curr_codepoint <= 0x1F5FF) || // Miscellaneous Symbols and Pictographs
+                (curr_codepoint >= 0x1F600 && curr_codepoint <= 0x1F64F) || // Emoticons
+                (curr_codepoint >= 0x1F680 && curr_codepoint <= 0x1F6FF) || // Transport and Map Symbols
+                (curr_codepoint >= 0x1F700 && curr_codepoint <= 0x1F77F);   // Alchemical Symbols
         }
 
-        inline bool is_uppercase(const uint32_t codepoint) {
+        inline bool is_uppercase(const uint32_t index) {
+            uint32_t curr_codepoint = codepoint(index);
             return
-                (codepoint >= 0x0041 && codepoint <= 0x005A) || // Basic Latin A-Z
-                (codepoint >= 0x00C0 && codepoint <= 0x00D6) || // Latin-1 Supplement À-Ö
-                (codepoint >= 0x00D8 && codepoint <= 0x00DE) || // Latin-1 Supplement Ø-Þ
-                (codepoint >= 0x0100 && codepoint <= 0x017F) || // Latin Extended-A
-                (codepoint >= 0x0180 && codepoint <= 0x024F) || // Latin Extended-B
-                (codepoint >= 0x0410 && codepoint <= 0x042F) || // Cyrillic А-Я
-                (codepoint >= 0x0391 && codepoint <= 0x03A9) || // Greek and Coptic Α-Ω
-                (codepoint >= 0x0531 && codepoint <= 0x0556) || // Armenian
-                (codepoint >= 0x05D0 && codepoint <= 0x05EA) || // Hebrew
-                (codepoint >= 0x0600 && codepoint <= 0x06C0) || // Arabic (some uppercase)
-                (codepoint >= 0x0780 && codepoint <= 0x07A5) || // Thaana
-                (codepoint >= 0x0905 && codepoint <= 0x0939) || // Devanagari
-                (codepoint >= 0x0985 && codepoint <= 0x0995) || // Bengali
-                (codepoint >= 0x0A05 && codepoint <= 0x0A0A) || // Gurmukhi
-                (codepoint >= 0x0A85 && codepoint <= 0x0A8D) || // Gujarati
-                (codepoint >= 0x0B05 && codepoint <= 0x0B0C) || // Oriya
-                (codepoint >= 0x0B85 && codepoint <= 0x0B9A) || // Tamil
-                (codepoint >= 0x0C05 && codepoint <= 0x0C0C) || // Telugu
-                (codepoint >= 0x0C85 && codepoint <= 0x0C8C) || // Kannada
-                (codepoint >= 0x0D05 && codepoint <= 0x0D0C) || // Malayalam
-                (codepoint >= 0x1000 && codepoint <= 0x102A) || // Myanmar
-                (codepoint >= 0x10A0 && codepoint <= 0x10C5) || // Georgian
-                (codepoint >= 0x1100 && codepoint <= 0x1159) || // Hangul Jamo
-                (codepoint >= 0xAC00 && codepoint <= 0xD7A3);   // Hangul Syllables
+                (curr_codepoint >= 0x0041 && curr_codepoint <= 0x005A) || // Basic Latin A-Z
+                (curr_codepoint >= 0x00C0 && curr_codepoint <= 0x00D6) || // Latin-1 Supplement À-Ö
+                (curr_codepoint >= 0x00D8 && curr_codepoint <= 0x00DE) || // Latin-1 Supplement Ø-Þ
+                (curr_codepoint >= 0x0100 && curr_codepoint <= 0x017F) || // Latin Extended-A
+                (curr_codepoint >= 0x0180 && curr_codepoint <= 0x024F) || // Latin Extended-B
+                (curr_codepoint >= 0x0410 && curr_codepoint <= 0x042F) || // Cyrillic А-Я
+                (curr_codepoint >= 0x0391 && curr_codepoint <= 0x03A9) || // Greek and Coptic Α-Ω
+                (curr_codepoint >= 0x0531 && curr_codepoint <= 0x0556) || // Armenian
+                (curr_codepoint >= 0x05D0 && curr_codepoint <= 0x05EA) || // Hebrew
+                (curr_codepoint >= 0x0600 && curr_codepoint <= 0x06C0) || // Arabic (some uppercase)
+                (curr_codepoint >= 0x0780 && curr_codepoint <= 0x07A5) || // Thaana
+                (curr_codepoint >= 0x0905 && curr_codepoint <= 0x0939) || // Devanagari
+                (curr_codepoint >= 0x0985 && curr_codepoint <= 0x0995) || // Bengali
+                (curr_codepoint >= 0x0A05 && curr_codepoint <= 0x0A0A) || // Gurmukhi
+                (curr_codepoint >= 0x0A85 && curr_codepoint <= 0x0A8D) || // Gujarati
+                (curr_codepoint >= 0x0B05 && curr_codepoint <= 0x0B0C) || // Oriya
+                (curr_codepoint >= 0x0B85 && curr_codepoint <= 0x0B9A) || // Tamil
+                (curr_codepoint >= 0x0C05 && curr_codepoint <= 0x0C0C) || // Telugu
+                (curr_codepoint >= 0x0C85 && curr_codepoint <= 0x0C8C) || // Kannada
+                (curr_codepoint >= 0x0D05 && curr_codepoint <= 0x0D0C) || // Malayalam
+                (curr_codepoint >= 0x1000 && curr_codepoint <= 0x102A) || // Myanmar
+                (curr_codepoint >= 0x10A0 && curr_codepoint <= 0x10C5) || // Georgian
+                (curr_codepoint >= 0x1100 && curr_codepoint <= 0x1159) || // Hangul Jamo
+                (curr_codepoint >= 0xAC00 && curr_codepoint <= 0xD7A3);   // Hangul Syllables
         }
 
         // Stream insertion operator
