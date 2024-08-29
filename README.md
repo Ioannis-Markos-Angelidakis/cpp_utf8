@@ -24,4 +24,5 @@ int32_t main() {
     }
 
     std::cout << "Is symbol? `" << str.at(11) << "` " << (str.is_symbol(11)? "YES\n" : "NO\n");
+    std::cout << "Is uppercase? `" << "Ц " << (utf8::is_uppercase("И")? "YES\n" : "NO\n");
 }
