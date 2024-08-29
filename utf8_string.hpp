@@ -291,7 +291,7 @@ namespace utf8 {
             return codepoint;
         }
 
-        inline bool is_symbol(const uint32_t index) {
+        inline bool is_symbol(const uint32_t index) const {
             uint32_t curr_codepoint = codepoint(index);
             return
                 (curr_codepoint >= 0x0021 && curr_codepoint <= 0x002F) || // ! " # $ % & ' ( ) * + , - . /
@@ -317,7 +317,7 @@ namespace utf8 {
                 (curr_codepoint >= 0x1F700 && curr_codepoint <= 0x1F77F);   // Alchemical Symbols
         }
 
-        inline bool is_uppercase(const uint32_t index) {
+        inline bool is_uppercase(const uint32_t index) const {
             uint32_t curr_codepoint = codepoint(index);
             return
                 (curr_codepoint >= 0x0041 && curr_codepoint <= 0x005A) || // Basic Latin A-Z
@@ -371,4 +371,12 @@ namespace utf8 {
             }
         }
     };
+
+    inline bool is_uppercase(const utf8::string& utf8str) {
+        return utf8str.is_uppercase(0);
+    }
+
+    inline bool is_symbol(const utf8::string& utf8str) {
+        return utf8str.is_symbol(0);
+    }
 }
